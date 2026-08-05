@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Output 2: 3D Geometric Model Render — The Grip</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { 
+    background: #1a1a2e; color: #e0e0e0; font-family: system-ui, -apple-system, sans-serif;
+    display: flex; flex-direction: column; align-items: center; padding: 40px 20px;
+    min-height: 100vh;
+  }
+  h1 { font-size: 1.8rem; margin-bottom: 8px; color: #ffffff; }
+  .subtitle { color: #888; margin-bottom: 40px; font-size: 0.95rem; }
+  
+  .comparison { display: flex; gap: 40px; flex-wrap: wrap; justify-content: center; max-width: 1200px; }
+  .panel { 
+    background: #16213e; border-radius: 16px; padding: 24px; 
+    flex: 1 1 450px; max-width: 550px; 
+    border: 1px solid #2a2a4a;
+  }
+  .panel h2 { font-size: 1.1rem; margin-bottom: 16px; color: #aaa; text-transform: uppercase; letter-spacing: 2px; }
+  .canvas { 
+    background: linear-gradient(135deg, #e8e4df 0%, #d5d0c8 50%, #e0dbd3 100%); 
+    border-radius: 12px; height: 420px; 
+    display: flex; align-items: center; justify-content: center;
+    position: relative; overflow: hidden;
+    border: 2px solid #3a3a5a;
+  }
+  
+  .panel-footer { margin-top: 16px; padding: 12px; background: #0f0f23; border-radius: 8px; font-family: monospace; font-size: 0.8rem; color: #7b7bff; }
+
+  .prompt-box, .rejected-box {
+    margin-top: 20px; border-radius: 12px; padding: 20px; max-width: 1140px; width: 100%;
+  }
+  .prompt-box { background: #0f0f23; border: 1px solid #2a2a4a; }
+  .prompt-box h3 { color: #7b7bff; margin-bottom: 8px; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 1px; }
+  .prompt-box pre { color: #c0c0ff; font-family: monospace; font-size: 0.85rem; white-space: pre-wrap; line-height: 1.6; }
+  .rejected-box { background: #2a1a1a; border: 1px solid #4a2a2a; }
+  .rejected-box h3 { color: #ff5050; margin-bottom: 8px; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 1px; }
+  .rejected-box p { color: #ffaaaa; font-size: 0.9rem; line-height: 1.5; }
+
+  /* Studio light effect */
+  .studio-light {
+    position: absolute; width: 300px; height: 300px; border-radius: 50%;
+    background: radial-gradient(circle, rgba(255,255,255,0.12) 0%, transparent 70%);
+    top: -50px; left: 50%; transform: translateX(-50%); pointer-events: none;
+  }
+  .studio-light2 {
+    position: absolute; width: 200px; height: 200px; border-radius: 50%;
+    background: radial-gradient(circle, rgba(255,255,255,0.06) 0%, transparent 70%);
+    bottom: -30px; right: 20px; pointer-events: none;
+  }
+
+  .callout {
+    position: absolute; font-family: monospace; font-size: 10px; 
+    background: rgba(0,0,0,0.8); color: #fff; padding: 4px 8px; 
+    border-radius: 4px; border-left: 3px solid #ff5050;
+    pointer-events: none; white-space: nowrap;
+  }
+  .callout-line {
+    position: absolute; pointer-events: none;
+    border-left: 1px dashed rgba(255,80,80,0.6);
+  }
+</style>
+</head>
+<body>
+<h1>Output 2: 3D Geometric Model Render</h1>
+<p class="subtitle">Modality: Image &middot; Model: Vizcom / Stable Diffusion img2img → 3D &middot; Date: 2026-08-04</p>
+
+<div class="comparison">
+  <div class="panel">
+    <h2>BEAUTY RENDER — As the AI Presents It</h2>
+    <div class="canvas" style="position: relative;">
+      <div class="studio-light"></div>
+      <div class="studio-light2"></div>
+      
+      <svg viewBox="0 0 500 420" width="100%" height="100%">
+        <defs>
+          <!-- Gradient for the handle body - photorealistic matte black -->
+          <linearGradient id="bodyGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" style="stop-color:#4a4a4a"/>
+            <stop offset="25%" style="stop-color:#2a2a2a"/>
+            <stop offset="50%" style="stop-color:#1a1a1a"/>
+            <stop offset="75%" style="stop-color:#2d2d2d"/>
+            <stop offset="100%" style="stop-color:#3a3a3a"/>
+          </linearGradient>
+          <!-- Specular highlight -->
+          <linearGradient id="specular" x1="20%" y1="0%" x2="80%" y2="100%">
+            <stop offset="0%" style="stop-color:rgba(255,255,255,0.15)"/>
+            <stop offset="30%" style="stop-color:rgba(255,255,255,0.05)"/>
+            <stop offset="100%" style="stop-color:rgba(255,255,255,0)"/>
+          </linearGradient>
+          <!-- Subtle texture pattern for grip -->
+          <pattern id="gripTexture" width="6" height="6" patternUnits="userSpaceOnUse">
+            <circle cx="3" cy="3" r="0.8" fill="rgba(255,255,255,0.03)"/>
+          </pattern>
+          <!-- Shadow filter -->
+          <filter id="dropShadow">
+            <feDropShadow dx="0" dy="8" stdDeviation="12" flood-color="#000" flood-opacity="0.3"/>
+          </filter>
+          <!-- Soft glow for studio look -->
+          <filter id="softGlow">
+            <feGaussianBlur stdDeviation="2" result="blur"/>
+            <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+          </filter>
+        </defs>
+        
+        <!-- Floor shadow -->
+        <ellipse cx="250" cy="370" rx="120" ry="18" fill="rgba(0,0,0,0.2)" filter="url(#softGlow)"/>
+        
+        <!-- Cane shaft -->
+        <rect x="242" y="280" width="16" height="100" rx="3" fill="#1a1a1a" filter="url(#dropShadow)"/>
+        <rect x="244" y="280" width="4" height="100" fill="rgba(255,255,255,0.05)"/>
+        
+        <!-- Handle body - 3D rendered with gradients -->
+        <g filter="url(#dropShadow)">
+          <!-- Main body shape -->
+          <path d="M 140 290 
+                   C 110 220, 120 130, 190 90 
+                   C 260 50, 320 60, 350 90 
+                   C 380 120, 390 170, 360 220 
+                   C 330 270, 280 290, 250 280" 
+                fill="url(#bodyGrad)" stroke="#1a1a1a" stroke-width="1"/>
+          <!-- Specular highlight overlay -->
+          <path d="M 160 250 
+                   C 140 200, 150 140, 200 105 
+                   C 240 80, 280 75, 310 95" 
+                fill="none" stroke="rgba(255,255,255,0.08)" stroke-width="12" stroke-linecap="round"/>
+          <!-- Grip texture overlay -->
+          <path d="M 140 290 
+                   C 110 220, 120 130, 190 90 
+                   C 260 50, 320 60, 350 90 
+                   C 380 120, 390 170, 360 220 
+                   C 330 270, 280 290, 250 280" 
+                fill="url(#gripTexture)"/>
+        </g>
+        
+        <!-- Surface labels (decorative, like the AI would add) -->
+        <text x="105" y="165" font-family="system-ui" font-size="9" fill="rgba(255,255,255,0.5)" transform="rotate(-60, 105, 165)">Palm Rest</text>
+        <text x="365" y="145" font-family="system-ui" font-size="9" fill="rgba(255,255,255,0.5)" transform="rotate(45, 365, 145)">Thumb Cradle</text>
+        <text x="155" y="210" font-family="system-ui" font-size="9" fill="rgba(255,255,255,0.5)">Barrel Body</text>
+        <text x="330" y="240" font-family="system-ui" font-size="9" fill="rgba(255,255,255,0.5)">Grip-End Fillet</text>
+        <text x="365" y="200" font-family="system-ui" font-size="9" fill="rgba(255,255,255,0.5)" transform="rotate(30, 365, 200)">Finger Rest</text>
+        
+        <!-- Studio reflection on the "floor" -->
+        <path d="M 160 290 C 140 250, 180 230, 250 225 C 320 220, 360 240, 345 270" 
+              fill="none" stroke="rgba(255,255,255,0.03)" stroke-width="20"/>
+      </svg>
+    </div>
+    <div class="panel-footer">Beauty render: photorealistic matte black polymer, studio lighting. Looks perfect — the flaw is invisible.</div>
+  </div>
+
+  <div class="panel">
+    <h2>ENGINEERING VIEW — With Measurement Callouts</h2>
+    <div class="canvas" style="position: relative; background: linear-gradient(135deg, #d8dce6 0%, #c4cad4 50%, #d0d6e0 100%);">
+      
+      <svg viewBox="0 0 500 420" width="100%" height="100%">
+        <defs>
+          <linearGradient id="wireGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" style="stop-color:#3a3a3a"/>
+            <stop offset="50%" style="stop-color:#1a1a1a"/>
+            <stop offset="100%" style="stop-color:#2a2a2a"/>
+          </linearGradient>
+          <filter id="wireShadow">
+            <feDropShadow dx="0" dy="4" stdDeviation="6" flood-color="#000" flood-opacity="0.15"/>
+          </filter>
+        </defs>
+        
+        <!-- Floor shadow -->
+        <ellipse cx="250" cy="370" rx="120" ry="18" fill="rgba(0,0,0,0.1)"/>
+        
+        <!-- Cane shaft -->
+        <rect x="242" y="280" width="16" height="100" rx="3" fill="#1a1a1a"/>
+        
+        <!-- Handle body -->
+        <g filter="url(#wireShadow)">
+          <path d="M 140 290 
+                   C 110 220, 120 130, 190 90 
+                   C 260 50, 320 60, 350 90 
+                   C 380 120, 390 170, 360 220 
+                   C 330 270, 280 290, 250 280" 
+                fill="url(#wireGrad)" stroke="#333" stroke-width="1"/>
+        </g>
+        
+        <!-- Wireframe cross-section lines -->
+        <path d="M 190 140 C 210 180, 240 200, 280 195" fill="none" stroke="rgba(255,255,255,0.15)" stroke-width="0.5" stroke-dasharray="4,4"/>
+        <path d="M 175 170 C 200 210, 240 225, 285 218" fill="none" stroke="rgba(255,255,255,0.15)" stroke-width="0.5" stroke-dasharray="4,4"/>
+        <path d="M 165 200 C 195 240, 240 250, 290 240" fill="none" stroke="rgba(255,255,255,0.15)" stroke-width="0.5" stroke-dasharray="4,4"/>
+        
+        <!-- === MEASUREMENT CALLOUTS === -->
+        
+        <!-- Index finger rest -- R12 callout -->
+        <line x1="225" y1="148" x2="115" y2="115" stroke="#ff3333" stroke-width="1.5" stroke-dasharray="3,2"/>
+        <circle cx="225" cy="148" r="3" fill="#ff3333"/>
+        <rect x="10" y="95" width="100" height="36" rx="4" fill="rgba(0,0,0,0.85)" stroke="#ff3333" stroke-width="1"/>
+        <text x="60" y="110" text-anchor="middle" font-family="monospace" font-size="9" fill="#ff6666">INDEX</text>
+        <text x="60" y="123" text-anchor="middle" font-family="monospace" font-size="10" fill="#ffffff" font-weight="bold">R = 12.0 mm</text>
+        
+        <!-- Middle finger rest -- R10 callout -->
+        <line x1="230" y1="185" x2="115" y2="165" stroke="#ff3333" stroke-width="1.5" stroke-dasharray="3,2"/>
+        <circle cx="230" cy="185" r="3" fill="#ff3333"/>
+        <rect x="10" y="148" width="100" height="36" rx="4" fill="rgba(0,0,0,0.85)" stroke="#ff3333" stroke-width="1"/>
+        <text x="60" y="163" text-anchor="middle" font-family="monospace" font-size="9" fill="#ff6666">MIDDLE</text>
+        <text x="60" y="176" text-anchor="middle" font-family="monospace" font-size="10" fill="#ffffff" font-weight="bold">R = 10.0 mm</text>
+        
+        <!-- Ring finger rest -- R8 callout -->
+        <line x1="240" y1="222" x2="115" y2="215" stroke="#ff3333" stroke-width="1.5" stroke-dasharray="3,2"/>
+        <circle cx="240" cy="222" r="3" fill="#ff3333"/>
+        <rect x="10" y="200" width="100" height="36" rx="4" fill="rgba(0,0,0,0.85)" stroke="#ff3333" stroke-width="1"/>
+        <text x="60" y="215" text-anchor="middle" font-family="monospace" font-size="9" fill="#ff6666">RING</text>
+        <text x="60" y="228" text-anchor="middle" font-family="monospace" font-size="10" fill="#ffffff" font-weight="bold">R = 8.0 mm</text>
+        
+        <!-- Warning annotation on finger rest area -->
+        <rect x="195" y="130" width="80" height="105" rx="6" fill="none" stroke="#ff3333" stroke-width="2" stroke-dasharray="6,3"/>
+        <text x="235" y="125" text-anchor="middle" font-family="monospace" font-size="8" fill="#ff3333" font-weight="bold">⚠ FINGER REST ZONE</text>
+        
+        <!-- Wall thickness callout -->
+        <line x1="175" y1="205" x2="380" y2="170" stroke="#ff8833" stroke-width="1" stroke-dasharray="2,3"/>
+        <rect x="375" y="155" width="115" height="36" rx="4" fill="rgba(0,0,0,0.85)" stroke="#ff8833" stroke-width="1"/>
+        <text x="432" y="170" text-anchor="middle" font-family="monospace" font-size="9" fill="#ffaa66">WALL</text>
+        <text x="432" y="183" text-anchor="middle" font-family="monospace" font-size="10" fill="#ffffff" font-weight="bold">t = 1.8 mm ✓</text>
+        
+        <!-- Surface labels -->
+        <text x="105" y="265" font-family="system-ui" font-size="8" fill="rgba(0,0,0,0.6)" transform="rotate(-60, 105, 265)">PALM REST</text>
+        <text x="370" y="145" font-family="system-ui" font-size="8" fill="rgba(0,0,0,0.6)" transform="rotate(45, 370, 145)">THUMB CRADLE</text>
+        <text x="340" y="255" font-family="system-ui" font-size="8" fill="rgba(0,0,0,0.6)">GRIP-END FILLET</text>
+        
+        <!-- Print orientation indicator -->
+        <g transform="translate(380, 310)">
+          <rect x="0" y="0" width="100" height="45" rx="4" fill="rgba(0,0,0,0.7)" stroke="rgba(255,255,255,0.3)" stroke-width="1"/>
+          <text x="50" y="14" text-anchor="middle" font-family="monospace" font-size="8" fill="#aaa">PRINT ORIENTATION</text>
+          <text x="50" y="30" text-anchor="middle" font-family="monospace" font-size="9" fill="#7bff7b">BAMBU X1 CARBON</text>
+          <text x="50" y="42" text-anchor="middle" font-family="monospace" font-size="8" fill="#aaa">0.4mm · 0.2mm LH</text>
+        </g>
+      </svg>
+    </div>
+    <div class="panel-footer">Engineering view: progressive finger rest curvature (R12→R10→R8) with measurement callouts. The 8mm constant radius in the original AI output is the fatal flaw.</div>
+  </div>
+</div>
+
+<div class="prompt-box">
+  <h3>🎯 Prompt Used</h3>
+  <pre>"Generate a photorealistic 3D render of this modified cane handle sketch as a manufacturable product. Show the part in a neutral studio environment with soft overhead lighting. Render the handle in matte black polymer with subtle grip texture. Include visible measurement callouts on the finger-rest surface showing the progressive curvature radii: 12mm at index finger position, 10mm at middle finger, 8mm at ring finger. Show the part from a ¾ angle that reveals both the aesthetic surface quality and the finger-rest geometry. Include a print-orientation indicator showing Bambu X1 Carbon specs (0.4mm nozzle, 0.2mm layer height). Background: clean engineering gray gradient."</pre>
+</div>
+
+<div class="rejected-box">
+  <h3>❌ What Was Rejected First</h3>
+  <p>The first 3D render output produced a beautiful product-photography shot — matte black handle on a pristine white cyclorama background with dramatic rim lighting. It looked like a catalog photo. But it entirely omitted the measurement callouts. Without the callouts, the geometric flaw is invisible, which is exactly the problem this sim is designed to teach: a render can look flawless while being mechanically wrong. The render was edited in a second pass to add the engineering overlay with explicit curve radii and the print-orientation indicator.</p>
+</div>
+
+</body>
+</html>

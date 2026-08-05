@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Output 1: 2D Sketch Modification — The Grip</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { 
+    background: #1a1a2e; color: #e0e0e0; font-family: system-ui, -apple-system, sans-serif;
+    display: flex; flex-direction: column; align-items: center; padding: 40px 20px;
+    min-height: 100vh;
+  }
+  h1 { font-size: 1.8rem; margin-bottom: 8px; color: #ffffff; }
+  .subtitle { color: #888; margin-bottom: 40px; font-size: 0.95rem; }
+  .comparison { display: flex; gap: 40px; flex-wrap: wrap; justify-content: center; max-width: 1200px; }
+  .panel { 
+    background: #16213e; border-radius: 16px; padding: 24px; 
+    flex: 1 1 450px; max-width: 550px; 
+    border: 1px solid #2a2a4a;
+  }
+  .panel h2 { font-size: 1.1rem; margin-bottom: 16px; color: #aaa; text-transform: uppercase; letter-spacing: 2px; }
+  .canvas { 
+    background: #f5f0eb; border-radius: 12px; height: 400px; 
+    display: flex; align-items: center; justify-content: center;
+    position: relative; overflow: hidden;
+    border: 2px solid #3a3a5a;
+  }
+  .sketch-area { width: 90%; height: 90%; position: relative; }
+  
+  /* Cane handle sketch - SVG based */
+  .handle-svg { width: 100%; height: 100%; }
+  
+  .panel-footer { margin-top: 16px; padding: 12px; background: #0f0f23; border-radius: 8px; font-family: monospace; font-size: 0.8rem; color: #7b7bff; }
+  
+  .annotation { 
+    position: absolute; background: rgba(255,80,80,0.15); 
+    border: 2px dashed rgba(255,80,80,0.5); border-radius: 6px;
+    pointer-events: none;
+  }
+  .annotation-label {
+    position: absolute; font-size: 10px; color: #ff5050; 
+    font-family: monospace; white-space: nowrap;
+  }
+
+  .prompt-box {
+    margin-top: 20px; background: #0f0f23; border-radius: 12px; padding: 20px;
+    border: 1px solid #2a2a4a; max-width: 1140px; width: 100%;
+  }
+  .prompt-box h3 { color: #7b7bff; margin-bottom: 8px; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 1px; }
+  .prompt-box pre { 
+    color: #c0c0ff; font-family: monospace; font-size: 0.85rem; 
+    white-space: pre-wrap; line-height: 1.6;
+  }
+
+  .rejected-box {
+    margin-top: 20px; background: #2a1a1a; border-radius: 12px; padding: 20px;
+    border: 1px solid #4a2a2a; max-width: 1140px; width: 100%;
+  }
+  .rejected-box h3 { color: #ff5050; margin-bottom: 8px; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 1px; }
+  .rejected-box p { color: #ffaaaa; font-size: 0.9rem; line-height: 1.5; }
+</style>
+</head>
+<body>
+<h1>Output 1: Prompt-Guided 2D Sketch Modification</h1>
+<p class="subtitle">Modality: Image &middot; Model: Vizcom / Stable Diffusion img2img &middot; Date: 2026-08-04</p>
+
+<div class="comparison">
+  <div class="panel">
+    <h2>BEFORE — Original Hand Sketch</h2>
+    <div class="canvas">
+      <svg class="handle-svg" viewBox="0 0 500 400">
+        <!-- Original cane handle sketch - simple organic curve, no finger detail -->
+        <defs>
+          <filter id="sketch"><feTurbulence type="fractalNoise" baseFrequency="0.04" numOctaves="3" result="noise"/>
+            <feDisplacementMap in="SourceGraphic" in2="noise" scale="1.5" xChannelSelector="R" yChannelSelector="G"/>
+          </filter>
+        </defs>
+        <!-- Cane shaft -->
+        <line x1="250" y1="340" x2="250" y2="390" stroke="#444" stroke-width="6" stroke-linecap="round"/>
+        <!-- Handle body - smooth organic curve -->
+        <path d="M 160 280 C 130 220, 140 140, 200 100 C 260 60, 310 70, 340 100 C 370 130, 370 180, 340 220 C 310 260, 250 280, 250 340" 
+              fill="none" stroke="#333" stroke-width="3" stroke-linecap="round" filter="url(#sketch)"/>
+        <!-- Grip area - smooth uniform curve, NO finger rests -->
+        <path d="M 180 200 C 180 170, 200 140, 250 130 C 300 120, 320 140, 330 180" 
+              fill="none" stroke="#555" stroke-width="2.5" stroke-linecap="round" stroke-dasharray="8,3"/>
+        <!-- Label -->
+        <text x="250" y="375" text-anchor="middle" font-family="monospace" font-size="11" fill="#888">Handle CH-4 — Original Sketch</text>
+      </svg>
+    </div>
+    <div class="panel-footer">Original 2D sketch: uniform grip curve, no finger articulation</div>
+  </div>
+
+  <div class="panel">
+    <h2>AFTER — Prompt-Modified Sketch</h2>
+    <div class="canvas" style="position: relative;">
+      <svg class="handle-svg" viewBox="0 0 500 400">
+        <!-- Modified cane handle sketch - WITH progressive finger rests -->
+        <defs>
+          <filter id="sketch2"><feTurbulence type="fractalNoise" baseFrequency="0.04" numOctaves="3" result="noise"/>
+            <feDisplacementMap in="SourceGraphic" in2="noise" scale="1.5" xChannelSelector="R" yChannelSelector="G"/>
+          </filter>
+        </defs>
+        <!-- Cane shaft -->
+        <line x1="250" y1="340" x2="250" y2="390" stroke="#444" stroke-width="6" stroke-linecap="round"/>
+        <!-- Handle body - organic curve -->
+        <path d="M 160 280 C 130 220, 140 140, 200 100 C 260 60, 310 70, 340 100 C 370 130, 370 180, 340 220 C 310 260, 250 280, 250 340" 
+              fill="none" stroke="#333" stroke-width="3" stroke-linecap="round" filter="url(#sketch2)"/>
+        
+        <!-- MODIFIED: Progressive finger rests on front grip -->
+        <!-- Index finger curve - DEEPEST (12mm effective radius) -->
+        <path d="M 205 145 C 210 155, 220 165, 235 168 C 245 170, 250 168, 252 162" 
+              fill="none" stroke="#2255cc" stroke-width="2.5" stroke-linecap="round"/>
+        <!-- Index annotation -->
+        <text x="260" y="155" font-family="monospace" font-size="9" fill="#2255cc">R12</text>
+        
+        <!-- Middle finger curve - MEDIUM (10mm radius) -->
+        <path d="M 200 180 C 208 190, 218 198, 235 200 C 248 202, 255 198, 257 190" 
+              fill="none" stroke="#2255cc" stroke-width="2.5" stroke-linecap="round"/>
+        <text x="262" y="190" font-family="monospace" font-size="9" fill="#2255cc">R10</text>
+        
+        <!-- Ring finger curve - SHALLOWEST (8mm radius) -->
+        <path d="M 195 215 C 202 222, 212 228, 230 230 C 242 231, 250 228, 253 222" 
+              fill="none" stroke="#2255cc" stroke-width="2.5" stroke-linecap="round"/>
+        <text x="258" y="222" font-family="monospace" font-size="9" fill="#2255cc">R8</text>
+        
+        <!-- Red highlight: progressive curvature area -->
+        <rect x="190" y="138" width="75" height="100" rx="8" fill="none" stroke="#ff5050" stroke-width="2" stroke-dasharray="5,3" opacity="0.6"/>
+        
+        <text x="250" y="375" text-anchor="middle" font-family="monospace" font-size="11" fill="#888">Handle CH-4 — Modified (Progressive Finger Rests)</text>
+      </svg>
+      <!-- Annotation -->
+      <div style="position: absolute; top: 120px; right: 30px; background: rgba(255,80,80,0.9); color: white; padding: 4px 8px; border-radius: 4px; font-family: monospace; font-size: 10px;">
+        Progressive curvature<br>R12 → R10 → R8
+      </div>
+    </div>
+    <div class="panel-footer">Modified: progressive finger rests with compound curvature — index (R12), middle (R10), ring (R8)</div>
+  </div>
+</div>
+
+<div class="prompt-box">
+  <h3>🎯 Prompt Used</h3>
+  <pre>"Modify this cane handle sketch: deepen the finger-rest curvature on the front grip area to create three distinct seating grooves for index, middle, and ring fingers. Maintain the organic swept-handle silhouette. The grip area should show progressive curvature — deeper at the index position (R12), shallower toward the ring finger position (R8). Keep the pencil-sketch industrial design style on white background."</pre>
+</div>
+
+<div class="rejected-box">
+  <h3>❌ What Was Rejected First</h3>
+  <p>The first output added generic "grip lines" as parallel horizontal grooves across the entire handle surface — visually decorative but geometrically meaningless. The grooves had uniform depth and spacing, ignoring the fact that different fingers require different curvature radii. A human hand's index, middle, and ring fingers do not close at uniform angles — the model treated grip texture as a visual pattern rather than a geometric constraint.</p>
+</div>
+
+</body>
+</html>
